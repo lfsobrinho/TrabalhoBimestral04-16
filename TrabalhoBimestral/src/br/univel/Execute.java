@@ -11,7 +11,29 @@ public class Execute extends SqlGen {
 
 	@Override
 	protected String getCreateTable(Connection con, Object obj) {
-		
+		try{
+			String nomeTabela;
+			Class<?> cl = obj.getClass();
+			StringBuilder sb = new StringBuilder();
+			
+			if(cl.isAnnotationPresent(Tabela.class)){
+				Tabela anotacaoTabela = cl.getAnnotation(Tabela.class);
+				nomeTabela = anotacaoTabela.value();
+			}else{
+				nomeTabela = cl.getSimpleName().toUpperCase();
+			}
+			sb.append("CREATE TABLE ").append(nomeTabela).append(" (");
+			
+			Field[] atributos = cl.getDeclaredFields();
+			
+			for (int i=0; i < atributos.length; i++){
+				
+			}
+		}
+			
+			
+			
+			
 		return null;
 	}
 
