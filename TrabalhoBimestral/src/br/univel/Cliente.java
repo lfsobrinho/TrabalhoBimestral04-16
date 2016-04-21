@@ -8,13 +8,13 @@ public class Cliente {
 	@Coluna(pk=true)
 	private int id;
 
-	@Coluna(nome="CLNOME")
+	@Coluna(nome="CLNOME",tam=200)
 	private String nome;
 	
-	@Coluna(nome="CLENDERECO")
+	@Coluna(nome="CLENDERECO",tam=200)
 	private String end;
 	
-	@Coluna(nome="CLTELEFONE")
+	@Coluna(nome="CLTELEFONE",tam=200)
 	private String phone;
 	
 	
@@ -22,7 +22,7 @@ public class Cliente {
 		this(0, null);
 	}
 
-	public Cliente(int id, String nome) {
+	public Cliente(int id, String nome , String end , String phone) {
 		super();
 		this.id = id;
 		this.nome = nome;
