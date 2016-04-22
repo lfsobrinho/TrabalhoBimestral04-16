@@ -99,13 +99,9 @@ public class Execute extends SqlGen {
 			return sb.toString();
 
 		} catch (SecurityException e) {
-			try {
-				throw new Exception(e);
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			throw new RuntimeException(e);
 		}
+		
 		
 	}
 
@@ -122,41 +118,40 @@ public class Execute extends SqlGen {
 		
 		StringBuilder sb = new StringBuilder();
 		
-		//Declarando a tabela
-		
 		String nomeTabela;
-		if(cl.isAnnotationPresent(Tabela.class)) {
+		
+		if (cl.isAnnotationPresent(Tabela.class)) {
 			
 			Tabela anotacaoTabela = cl.getAnnotation(Tabela.class);
 			nomeTabela = anotacaoTabela.value();
 			
-		} else {
+		}else{
 			nomeTabela = cl.getSimpleName().toUpperCase();
 		}
-		sb.append("INSERT INTO ").append(nomeTabela).append(" (");
+		sb.append("INSET INTO ").append(nomeTabela).append(" )");
 		
 		Field[] atributos = cl.getDeclaredFields();
 		
-		for (int i = 0; i < atributos.length; i++) {
-			
+		for (int i = 0; i < atributos.length; i++){
 			Field field = atributos[i];
 			
 			String nomeColuna;
 			
-			if (field.isAnnotationPresent(Coluna.class)) {
+			if (field.isAnnotationPresent(Tabela.class)){
+				
 				Coluna anotacaoColuna = field.getAnnotation(Coluna.class);
 				
-				if (anotacaoColuna.nome().isEmpty()) {
+				if (anotacaoColuna.nome().isEmpty()){
 					nomeColuna = field.getName().toUpperCase();
-				} else {
+				}else{
 					nomeColuna = anotacaoColuna.nome();
 				}
-		
-			} else {
+				
+			}else{
 				nomeColuna = field.getName().toUpperCase();
 			}
 			
-			if (i > 0) {
+			if (i > 0){
 				sb.append(", ");
 			}
 			
@@ -165,8 +160,8 @@ public class Execute extends SqlGen {
 		
 		sb.append(") VALUES (");
 		
-		for (int i = 0; i < atributos.length; i++) {
-			if (i > 0) {
+		for (int i = 0; i < atributos.length; i++){
+			if(i > 0){
 				sb.append(", ");
 			}
 			sb.append('?');
@@ -174,41 +169,37 @@ public class Execute extends SqlGen {
 		sb.append(')');
 		
 		String strSql = sb.toString();
-		System.out.println("SQL GERADO: " + strSql);
+		System.out.println("SQL GERADO : "+strSql);
 		
-		// comeca a coocar o valor do prepared statement
 		PreparedStatement ps = null;
-		try {
+		try{
+			
 			ps = con.prepareStatement(strSql);
 			
-			for (int i = 0; i < atributos.length; i++) {
+			for (int i = 0; i < atributos.length; i++){
 				Field field = atributos[i];
 				
-				// importante nao esquecer
 				field.setAccessible(true);
 				
-				if (field.getType().equals(int.class)) {
-					ps.setInt(i + 1, field.getInt(obj));
-					
-				}else{
-					if (field.getType().equals(String.class)) {
+				if (field.getType().equals(int.class)){
+					ps.setInt(i + 1,field.getInt(obj));
+				}else {
+					if (field.getType().equals(String.class)){
 						ps.setString(i + 1, String.valueOf(field.get(obj)));
-						
 					}else{
 						throw new RuntimeException("Tipo nao suportado , falta implementar");
-						
 					}
-					
 				}
-			} catch (SQLException e){
-				e.printStackTrace();
-			}catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			}catch (IllegalAccessException e) {
-				e.printStackTrace();
 			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 		return ps;
-		
+
 	}
 
 	@Override
