@@ -204,7 +204,7 @@ public class Execute extends SqlGen {
 
 	@Override
 	protected PreparedStatement getSqlSelectAll(Connection con, Object obj) {
-		// TODO Auto-generated method stub
+		 
 		return null;
 	}
 
