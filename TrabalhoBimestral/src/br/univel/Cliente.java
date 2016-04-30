@@ -7,7 +7,7 @@ import br.univel.enu.*;
 public class Cliente {
 
 	@Coluna(pk=true)
-	private int id;
+	private int ID;
 
 	@Coluna(nome="CLNOME",tam=200)
 	private String nome;
@@ -23,7 +23,7 @@ public class Cliente {
 
 	public Cliente(int id, String nome , String end , String phone , EstadoCivil ec) {
 		super();
-		this.id = id;
+		this.ID = id;
 		this.nome = nome;
 		this.end = end;
 		this.phone = phone;
@@ -39,11 +39,11 @@ public class Cliente {
 	}
 
 	public int getId() {
-		return id;
+		return ID;
 	}
 
 	public void setId(int id) {
-		this.id = id;
+		this.ID = id;
 	}
 
 	public String getNome() {
