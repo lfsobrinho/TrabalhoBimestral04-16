@@ -104,121 +104,120 @@ public class Execute extends SqlGen {
 		} catch (SecurityException e) {
 			throw new RuntimeException(e);
 		}
-		
-		
+
 	}
 
 	@Override
 	protected String getDropTable(Connection con, Object obj) {
 		try {
-            String nameTable;
-            StringBuilder sb = new StringBuilder();
+			String nameTable;
+			StringBuilder sb = new StringBuilder();
 
-            Class<?> cl = obj.getClass();
+			Class<?> cl = obj.getClass();
 
-            if (cl.isAnnotationPresent(Tabela.class)) {
-                Tabela tab = cl.getAnnotation(Tabela.class);
-                nameTable = tab.value();
-            } else {
-                nameTable = cl.getSimpleName().toUpperCase();
-            }
+			if (cl.isAnnotationPresent(Tabela.class)) {
+				Tabela tab = cl.getAnnotation(Tabela.class);
+				nameTable = tab.value();
+			} else {
+				nameTable = cl.getSimpleName().toUpperCase();
+			}
 
-            sb.append("DROP TABLE ").append(nameTable).append(";");
-            String drop = sb.toString();
+			sb.append("DROP TABLE ").append(nameTable).append(";");
+			String drop = sb.toString();
 
-            System.out.println(drop);
-            Statement execute = con.createStatement();
-            execute.executeUpdate(drop);
-            return drop;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+			System.out.println(drop);
+			Statement execute = con.createStatement();
+			execute.executeUpdate(drop);
+			return drop;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
 	protected PreparedStatement getSqlInsert(Connection con, Object obj) {
 
 		Class<? extends Object> cl = obj.getClass();
-		
+
 		StringBuilder sb = new StringBuilder();
-		
+
 		String nomeTabela;
-		
+
 		if (cl.isAnnotationPresent(Tabela.class)) {
-			
+
 			Tabela anotacaoTabela = cl.getAnnotation(Tabela.class);
 			nomeTabela = anotacaoTabela.value();
-			
-		}else{
+
+		} else {
 			nomeTabela = cl.getSimpleName().toUpperCase();
 		}
 		sb.append("INSET INTO ").append(nomeTabela).append(" )");
-		
+
 		Field[] atributos = cl.getDeclaredFields();
-		
-		for (int i = 0; i < atributos.length; i++){
+
+		for (int i = 0; i < atributos.length; i++) {
 			Field field = atributos[i];
-			
+
 			String nomeColuna;
-			
-			if (field.isAnnotationPresent(Tabela.class)){
-				
+
+			if (field.isAnnotationPresent(Tabela.class)) {
+
 				Coluna anotacaoColuna = field.getAnnotation(Coluna.class);
-				
-				if (anotacaoColuna.nome().isEmpty()){
+
+				if (anotacaoColuna.nome().isEmpty()) {
 					nomeColuna = field.getName().toUpperCase();
-				}else{
+				} else {
 					nomeColuna = anotacaoColuna.nome();
 				}
-				
-			}else{
+
+			} else {
 				nomeColuna = field.getName().toUpperCase();
 			}
-			
-			if (i > 0){
+
+			if (i > 0) {
 				sb.append(", ");
 			}
-			
+
 			sb.append(nomeColuna);
 		}
-		
+
 		sb.append(") VALUES (");
-		
-		for (int i = 0; i < atributos.length; i++){
-			if(i > 0){
+
+		for (int i = 0; i < atributos.length; i++) {
+			if (i > 0) {
 				sb.append(", ");
 			}
 			sb.append('?');
 		}
 		sb.append(')');
-		
+
 		String strSql = sb.toString();
-		System.out.println("SQL GERADO : "+strSql);
-		
+		System.out.println("SQL GERADO : " + strSql);
+
 		PreparedStatement ps = null;
-		try{
-			
+		try {
+
 			ps = con.prepareStatement(strSql);
-			
-			for (int i = 0; i < atributos.length; i++){
+
+			for (int i = 0; i < atributos.length; i++) {
 				Field field = atributos[i];
-				
+
 				field.setAccessible(true);
-				
-				if (field.getType().equals(int.class)){
-					ps.setInt(i + 1,field.getInt(obj));
-				}else {
-					if (field.getType().equals(String.class)){
+
+				if (field.getType().equals(int.class)) {
+					ps.setInt(i + 1, field.getInt(obj));
+				} else {
+					if (field.getType().equals(String.class)) {
 						ps.setString(i + 1, String.valueOf(field.get(obj)));
-					}else{
+					} else {
 						throw new RuntimeException("Tipo nao suportado , falta implementar");
 					}
 				}
 			}
-		}catch(SQLException e){
+		} catch (SQLException e) {
 			e.printStackTrace();
-		}catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
@@ -229,155 +228,157 @@ public class Execute extends SqlGen {
 
 	@Override
 	protected PreparedStatement getSqlSelectAll(Connection con, Object obj) {
-		 
-	    Class<?> cl = obj.getClass();
-        StringBuilder sb = new StringBuilder();
-        String nameTable;
 
-        if (cl.isAnnotationPresent(Tabela.class)) {
-            nameTable = cl.getAnnotation(Tabela.class).value();
-        } else {
-            nameTable = cl.getSimpleName().toUpperCase();
-        }
-        sb.append("SELECT * FROM ").append(nameTable).append(";");
+		Class<?> cl = obj.getClass();
+		StringBuilder sb = new StringBuilder();
+		String nameTable;
 
-        String select = sb.toString();
-        System.out.println(select);
-        PreparedStatement ps = null;
+		if (cl.isAnnotationPresent(Tabela.class)) {
+			nameTable = cl.getAnnotation(Tabela.class).value();
+		} else {
+			nameTable = cl.getSimpleName().toUpperCase();
+		}
+		sb.append("SELECT * FROM ").append(nameTable).append(";");
 
-        try {
-            ps = con.prepareStatement(select);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return ps;
+		String select = sb.toString();
+		System.out.println(select);
+		PreparedStatement ps = null;
+
+		try {
+			ps = con.prepareStatement(select);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return ps;
 	}
 
 	@Override
-	protected PreparedStatement getSqlSelectById(Connection con, Object obj,int id) {
+	protected PreparedStatement getSqlSelectById(Connection con, Object obj, int id) {
 		Class<?> cl = obj.getClass();
-        StringBuilder sb = new StringBuilder();
-        String nomeTabela;
-        
-        Field[] atributos = cl.getDeclaredFields();
-        
-        for (int i = 0; i < atributos.length; i++) {
-                        Field field = atributos[i];
-        }
-      
+		StringBuilder sb = new StringBuilder();
+		String nomeTabela;
 
-        if (cl.isAnnotationPresent(Tabela.class)) {
-            nomeTabela = cl.getAnnotation(Tabela.class).value();
-        } else {
-            nomeTabela = cl.getSimpleName().toUpperCase();
-        }
+		Field[] atributos = cl.getDeclaredFields();
 
-        sb.append("SELECT * FROM ").append(nomeTabela).append(" WHERE ID=").append(id).append(";");
-        String select = sb.toString();
-        System.out.println(select);
-        PreparedStatement ps = null;
-        
-        try {
-            ps = con.prepareStatement(select);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return ps;
+		for (int i = 0; i < atributos.length; i++) {
+			Field field = atributos[i];
+		}
+
+		if (cl.isAnnotationPresent(Tabela.class)) {
+			nomeTabela = cl.getAnnotation(Tabela.class).value();
+		} else {
+			nomeTabela = cl.getSimpleName().toUpperCase();
+		}
+
+		sb.append("SELECT * FROM ").append(nomeTabela).append(" WHERE ID=").append(id).append(";");
+		String select = sb.toString();
+		System.out.println(select);
+		PreparedStatement ps = null;
+
+		try {
+			ps = con.prepareStatement(select);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return ps;
+
+	}
+
+	@Override
+	protected PreparedStatement getSqlUpdateById(Connection con, Object obj, int id) {
+		Class<?> cl = obj.getClass();
+		StringBuilder sb = new StringBuilder();
+		String nomeTabela;
+
+		if (cl.isAnnotationPresent(Tabela.class)) {
+			nomeTabela = cl.getAnnotation(Tabela.class).value();
+		} else {
+			nomeTabela = cl.getSimpleName().toUpperCase();
+		}
+
+		sb.append("UPDATE ").append(nomeTabela).append(" SET ");
+
+		Field[] atributos = cl.getDeclaredFields();
 		
-	}
 
-	@Override
-	protected PreparedStatement getSqlUpdateById(Connection con, Object obj,int id) {
-		Class<?> cl = obj.getClass();
-        StringBuilder sb = new StringBuilder();
-        String nomeTabela;
+		for (int i = 0; i < atributos.length; i++) {
+			Field field = atributos[i];
+			String nomeColuna;
 
-        if (cl.isAnnotationPresent(Tabela.class)) {
-            nomeTabela = cl.getAnnotation(Tabela.class).value();
-        } else {
-            nomeTabela = cl.getSimpleName().toUpperCase();
-        }
+			if (field.isAnnotationPresent(Coluna.class)) {
+				Coluna coluna = field.getAnnotation(Coluna.class);
+				if (coluna.nome().isEmpty()) {
+					nomeColuna = field.getName().toUpperCase();
+				} else {
+					nomeColuna = coluna.nome();
+				}
+			} else {
+				nomeColuna = field.getName().toUpperCase();
+			}
 
-        sb.append("UPDATE ").append(nomeTabela).append(" SET ");
+			if (i > 0) {
+				sb.append(", ");
+			}
 
-        Field[] atributos = cl.getDeclaredFields();
+			sb.append(nomeColuna).append(" = ?");
+		}
+		sb.append(" WHERE ID = ").append(id);
+		String update = sb.toString();
+		System.out.println(update);
 
-        for (int i = 0; i < atributos.length; i++) {
-            Field field = atributos[i];
-            String nomeColuna;
+		PreparedStatement ps = null;
 
-            if (field.isAnnotationPresent(Coluna.class)) {
-                Coluna column = field.getAnnotation(Coluna.class);
-                if (column.nome().isEmpty()) {
-                    nomeColuna = field.getName().toUpperCase();
-                } else {
-                    nomeColuna = column.nome();
-                }
-            } else {
-                nomeColuna = field.getName().toUpperCase();
-            }
+		try {
+			ps = con.prepareStatement(update);
 
-            if (i > 0) {
-                sb.append(", ");
-            }
+			for (int i = 0; i < atributos.length; i++) {
+				Field field = atributos[i];
+				Object type = field.getType();
 
-            sb.append(nomeColuna).append(" = ?");
-        }
-        sb.append(" WHERE ID = ").append(id);
-        String update = sb.toString();
-        System.out.println(update);
+				field.setAccessible(true);
 
-        PreparedStatement ps = null;
+				if (type.equals(int.class)) {
+					ps.setInt(i + 1, field.getInt(obj));
+				} else{ 
+					if (type.equals(String.class)) {
+						ps.setString(i + 1, String.valueOf(field.get(obj)));
+					} else {
+						//tipo a implementar
+					}	
+				}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 
-        try {
-            ps = con.prepareStatement(update);
-
-            for (int i = 0; i < atributos.length; i++) {
-                Field field = atributos[i];
-                Object type = field.getType();
-
-                field.setAccessible(true);
-                
-                if (type.equals(int.class)) {
-                    ps.setInt(i + 1, field.getInt(obj));
-                } else if (type.equals(String.class)) {
-                    ps.setString(i + 1, String.valueOf(field.get(obj)));
-                } else {
-                	
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        return ps;
+		return ps;
 	}
 
 	@Override
 	protected PreparedStatement getSqlDeleteById(Connection con, Object obj, int id) {
-		 PreparedStatement ps = null;
-	        try {
-	            Class<?> cl = obj.getClass();
-	            StringBuilder sb = new StringBuilder();
-	            String nameTable;
+		PreparedStatement ps = null;
+		try {
+			Class<?> cl = obj.getClass();
+			StringBuilder sb = new StringBuilder();
+			String nameTable;
 
-	            if (cl.isAnnotationPresent(Tabela.class)) {
-	                nameTable = cl.getAnnotation(Tabela.class).value();
-	            } else {
-	                nameTable = cl.getSimpleName().toUpperCase();
-	            }
+			if (cl.isAnnotationPresent(Tabela.class)) {
+				nameTable = cl.getAnnotation(Tabela.class).value();
+			} else {
+				nameTable = cl.getSimpleName().toUpperCase();
+			}
 
-	            sb.append("DELETE FROM ").append(nameTable).append(" WHERE ID = ").append(id).append(";");
-	            String delete = sb.toString();
-	            System.out.println(delete);
+			sb.append("DELETE FROM ").append(nameTable).append(" WHERE ID = ").append(id).append(";");
+			String delete = sb.toString();
+			System.out.println(delete);
 
-	            ps = con.prepareStatement(delete);
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }	        
+			ps = con.prepareStatement(delete);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return ps;
 	}
 }
