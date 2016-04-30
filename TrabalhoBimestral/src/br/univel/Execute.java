@@ -231,14 +231,14 @@ public class Execute extends SqlGen {
 
 		Class<?> cl = obj.getClass();
 		StringBuilder sb = new StringBuilder();
-		String nameTable;
+		String nomeTab;
 
 		if (cl.isAnnotationPresent(Tabela.class)) {
-			nameTable = cl.getAnnotation(Tabela.class).value();
+			nomeTab = cl.getAnnotation(Tabela.class).value();
 		} else {
-			nameTable = cl.getSimpleName().toUpperCase();
+			nomeTab = cl.getSimpleName().toUpperCase();
 		}
-		sb.append("SELECT * FROM ").append(nameTable).append(";");
+		sb.append("SELECT * FROM ").append(nomeTab).append(";");
 
 		String select = sb.toString();
 		System.out.println(select);
