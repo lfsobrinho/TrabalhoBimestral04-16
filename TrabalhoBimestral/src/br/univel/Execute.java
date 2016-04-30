@@ -205,7 +205,27 @@ public class Execute extends SqlGen {
 	@Override
 	protected PreparedStatement getSqlSelectAll(Connection con, Object obj) {
 		 
-		return null;
+	    Class<?> cl = obj.getClass();
+        StringBuilder sb = new StringBuilder();
+        String nameTable;
+
+        if (cl.isAnnotationPresent(Tabela.class)) {
+            nameTable = cl.getAnnotation(Tabela.class).value();
+        } else {
+            nameTable = cl.getSimpleName().toUpperCase();
+        }
+        sb.append("SELECT * FROM ").append(nameTable).append(";");
+
+        String select = sb.toString();
+        System.out.println(select);
+        PreparedStatement ps = null;
+
+        try {
+            ps = con.prepareStatement(select);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ps;
 	}
 
 	@Override
