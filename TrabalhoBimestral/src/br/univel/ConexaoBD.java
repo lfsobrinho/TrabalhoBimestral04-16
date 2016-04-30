@@ -10,14 +10,13 @@ public class ConexaoBD {
 
 		public Connection abrirConexao() throws SQLException {
 
-			String url = "jdbc:mysql://localhost/trabalho";
-			String user = "root";
-			String pass = "123";
+			String url = "";
+			String user = "";
+			String pass = "";
 			
 			try {
-				Class.forName("com.mysql.jdbc.Driver");
+				Class.forName("");
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
