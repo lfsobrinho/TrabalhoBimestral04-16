@@ -6,10 +6,10 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import br.univel.anotation.Coluna;
 import br.univel.anotation.Tabela;
-import br.univel.*;
 
 public class Execute extends SqlGen {
 	public Execute() {
@@ -110,8 +110,30 @@ public class Execute extends SqlGen {
 
 	@Override
 	protected String getDropTable(Connection con, Object obj) {
-		return null;
+		try {
+            String nameTable;
+            StringBuilder sb = new StringBuilder();
 
+            Class<?> cl = obj.getClass();
+
+            if (cl.isAnnotationPresent(Tabela.class)) {
+                Tabela tab = cl.getAnnotation(Tabela.class);
+                nameTable = tab.value();
+            } else {
+                nameTable = cl.getSimpleName().toUpperCase();
+            }
+
+            sb.append("DROP TABLE ").append(nameTable).append(";");
+            String drop = sb.toString();
+
+            System.out.println(drop);
+            Statement execute = con.createStatement();
+            execute.executeUpdate(drop);
+            return drop;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
 	}
 
 	@Override
@@ -342,7 +364,26 @@ public class Execute extends SqlGen {
 
 	@Override
 	protected PreparedStatement getSqlDeleteById(Connection con, Object obj, int id) {
-		// TODO Auto-generated method stub
-		return null;
+		 PreparedStatement ps = null;
+	        try {
+	            Class<?> cl = obj.getClass();
+	            StringBuilder sb = new StringBuilder();
+	            String nameTable;
+
+	            if (cl.isAnnotationPresent(Tabela.class)) {
+	                nameTable = cl.getAnnotation(Tabela.class).value();
+	            } else {
+	                nameTable = cl.getSimpleName().toUpperCase();
+	            }
+
+	            sb.append("DELETE FROM ").append(nameTable).append(" WHERE ID = ").append(id).append(";");
+	            String delete = sb.toString();
+	            System.out.println(delete);
+
+	            ps = con.prepareStatement(delete);
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }	        
+		return ps;
 	}
 }
