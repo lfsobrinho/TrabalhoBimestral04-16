@@ -236,6 +236,13 @@ public class Execute extends SqlGen {
 		Class<?> cl = obj.getClass();
         StringBuilder sb = new StringBuilder();
         String nomeTabela;
+        
+        Field[] atributos = cl.getDeclaredFields();
+        
+        for (int i = 0; i < atributos.length; i++) {
+                        Field field = atributos[i];
+        }
+      
 
         if (cl.isAnnotationPresent(Tabela.class)) {
             nomeTabela = cl.getAnnotation(Tabela.class).value();
@@ -271,28 +278,28 @@ public class Execute extends SqlGen {
 
         sb.append("UPDATE ").append(nomeTabela).append(" SET ");
 
-        Field[] attributes = cl.getDeclaredFields();
+        Field[] atributos = cl.getDeclaredFields();
 
-        for (int i = 0; i < attributes.length; i++) {
-            Field field = attributes[i];
-            String nameColumn;
+        for (int i = 0; i < atributos.length; i++) {
+            Field field = atributos[i];
+            String nomeColuna;
 
             if (field.isAnnotationPresent(Coluna.class)) {
                 Coluna column = field.getAnnotation(Coluna.class);
                 if (column.nome().isEmpty()) {
-                    nameColumn = field.getName().toUpperCase();
+                    nomeColuna = field.getName().toUpperCase();
                 } else {
-                    nameColumn = column.nome();
+                    nomeColuna = column.nome();
                 }
             } else {
-                nameColumn = field.getName().toUpperCase();
+                nomeColuna = field.getName().toUpperCase();
             }
 
             if (i > 0) {
                 sb.append(", ");
             }
 
-            sb.append(nameColumn).append(" = ?");
+            sb.append(nomeColuna).append(" = ?");
         }
         sb.append(" WHERE ID = ").append(id);
         String update = sb.toString();
@@ -303,11 +310,12 @@ public class Execute extends SqlGen {
         try {
             ps = con.prepareStatement(update);
 
-            for (int i = 0; i < attributes.length; i++) {
-                Field field = attributes[i];
+            for (int i = 0; i < atributos.length; i++) {
+                Field field = atributos[i];
                 Object type = field.getType();
 
                 field.setAccessible(true);
+                
                 if (type.equals(int.class)) {
                     ps.setInt(i + 1, field.getInt(obj));
                 } else if (type.equals(String.class)) {
