@@ -276,7 +276,7 @@ public class Execute extends SqlGen {
         String select = sb.toString();
         System.out.println(select);
         PreparedStatement ps = null;
-
+        
         try {
             ps = con.prepareStatement(select);
         } catch (SQLException e) {
@@ -342,20 +342,14 @@ public class Execute extends SqlGen {
                     ps.setInt(i + 1, field.getInt(obj));
                 } else if (type.equals(String.class)) {
                     ps.setString(i + 1, String.valueOf(field.get(obj)));
-                } else if (field.getType().isEnum()) {
-                    Object value = field.get(obj);
-                    Method m = value.getClass().getMethod("ordinal");
-                    ps.setInt(i + 1, (Integer) m.invoke(value, null));
+                } else {
+                	
                 }
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
 
