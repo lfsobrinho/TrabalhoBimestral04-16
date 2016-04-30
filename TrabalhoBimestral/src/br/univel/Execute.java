@@ -232,7 +232,7 @@ public class Execute extends SqlGen {
 	}
 
 	@Override
-	protected PreparedStatement getSqlSelectById(Connection con, Object obj) {
+	protected PreparedStatement getSqlSelectById(Connection con, Object obj,int id) {
 		Class<?> cl = obj.getClass();
         StringBuilder sb = new StringBuilder();
         String nomeTabela;
@@ -261,11 +261,11 @@ public class Execute extends SqlGen {
             e.printStackTrace();
         }
         return ps;
-		return null;
+		
 	}
 
 	@Override
-	protected PreparedStatement getSqlUpdateById(Connection con, Object obj) {
+	protected PreparedStatement getSqlUpdateById(Connection con, Object obj,int id) {
 		Class<?> cl = obj.getClass();
         StringBuilder sb = new StringBuilder();
         String nomeTabela;
@@ -341,7 +341,7 @@ public class Execute extends SqlGen {
 	}
 
 	@Override
-	protected PreparedStatement getSqlDeleteById(Connection con, Object obj) {
+	protected PreparedStatement getSqlDeleteById(Connection con, Object obj, int id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
