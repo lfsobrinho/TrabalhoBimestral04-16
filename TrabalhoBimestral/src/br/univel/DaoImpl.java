@@ -172,7 +172,6 @@ public class DaoImpl implements Dao<Cliente, Integer> {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-
 		}			
 		
 	}	

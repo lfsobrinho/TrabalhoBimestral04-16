@@ -56,22 +56,21 @@ public class Execute extends SqlGen {
 					tipoColuna = "VARCHAR(100)";
 
 				} else {
-					if (tipoParametro.equals(int.class)) {
+					if (tipoParametro.equals(int.class) || tipoParametro.isEnum()) {
 						tipoColuna = "INT";
 					} else {
 						tipoColuna = "DESCONHECIDO";
 					}
 
-					if (i > 0) {
-						sb.append(",");
-					}
-
-					sb.append("\n\t").append(nomeColuna).append(' ').append(tipoColuna);
 				}
+				if (i > 0) {
+					sb.append(",");
+				}
+				sb.append("\n\t").append(nomeColuna).append(' ').append(tipoColuna);
 			}
 			// Declaraçao da PK
 
-			sb.append(",\n\tPRYMARY KEY( ");
+			sb.append(",\n\tPRIMARY KEY( ");
 
 			for (int i = 0, achou = 0; i < atributos.length; i++) {
 				Field field = atributos[i];
@@ -95,7 +94,8 @@ public class Execute extends SqlGen {
 						achou++;
 					}
 				}
-				sb.append(" )");
+				if (i == atributos.length - 1) 
+					sb.append(" )");
 			}
 			sb.append("\n);");
 
@@ -109,7 +109,6 @@ public class Execute extends SqlGen {
 
 	@Override
 	protected String getDropTable(Connection con, Object obj) {
-		try {
 			String nameTable;
 			StringBuilder sb = new StringBuilder();
 
@@ -126,13 +125,8 @@ public class Execute extends SqlGen {
 			String drop = sb.toString();
 
 			System.out.println(drop);
-			Statement execute = con.createStatement();
-			execute.executeUpdate(drop);
+			
 			return drop;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	@Override
@@ -152,7 +146,7 @@ public class Execute extends SqlGen {
 		} else {
 			nomeTabela = cl.getSimpleName().toUpperCase();
 		}
-		sb.append("INSET INTO ").append(nomeTabela).append(" )");
+		sb.append("INSET INTO ").append(nomeTabela).append(" (");
 
 		Field[] atributos = cl.getDeclaredFields();
 
@@ -161,7 +155,7 @@ public class Execute extends SqlGen {
 
 			String nomeColuna;
 
-			if (field.isAnnotationPresent(Tabela.class)) {
+			if (field.isAnnotationPresent(Coluna.class)) {
 
 				Coluna anotacaoColuna = field.getAnnotation(Coluna.class);
 
@@ -197,31 +191,30 @@ public class Execute extends SqlGen {
 
 		PreparedStatement ps = null;
 		try {
-
+//
 			ps = con.prepareStatement(strSql);
-
-			for (int i = 0; i < atributos.length; i++) {
-				Field field = atributos[i];
-
-				field.setAccessible(true);
-
-				if (field.getType().equals(int.class)) {
-					ps.setInt(i + 1, field.getInt(obj));
-				} else {
-					if (field.getType().equals(String.class)) {
-						ps.setString(i + 1, String.valueOf(field.get(obj)));
-					} else {
-						throw new RuntimeException("Tipo nao suportado , falta implementar");
-					}
-				}
-			}
+//
+//			for (int i = 0; i < atributos.length; i++) {
+//				Field field = atributos[i];
+//
+//				field.setAccessible(true);
+//
+//				if (field.getType().equals(int.class)) {
+//					ps.setInt(i + 1, field.getInt(obj));
+//				} else {
+//					if (field.getType().equals(String.class)) {
+//						ps.setString(i + 1, String.valueOf(field.get(obj)));
+//					} else {
+//						throw new RuntimeException("Tipo nao suportado , falta implementar");
+//					}
+//				}
+//			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
 		}
+		
 		return ps;
 
 	}

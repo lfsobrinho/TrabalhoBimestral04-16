@@ -5,14 +5,17 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConexaoBD {
+	public ConexaoBD() {
+		
+	}
 	
 		private Connection con = null;		
 
 		public Connection abrirConexao() throws SQLException {
 
-			String url = "";
-			String user = "";
-			String pass = "";
+			String url = "jdbc:h2:~/sqlgen";
+			String user = "root";
+			String pass = "root";
 			
 			try {
 				Class.forName("org.h2.Driver");
