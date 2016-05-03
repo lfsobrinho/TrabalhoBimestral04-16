@@ -15,7 +15,7 @@ public class ConexaoBD {
 			String pass = "";
 			
 			try {
-				Class.forName("");
+				Class.forName("org.h2.Driver");
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
