@@ -146,7 +146,7 @@ public class Execute extends SqlGen {
 		} else {
 			nomeTabela = cl.getSimpleName().toUpperCase();
 		}
-		sb.append("INSET INTO ").append(nomeTabela).append(" (");
+		sb.append("INSERT INTO ").append(nomeTabela).append(" (");
 
 		Field[] atributos = cl.getDeclaredFields();
 
@@ -191,24 +191,9 @@ public class Execute extends SqlGen {
 
 		PreparedStatement ps = null;
 		try {
-//
+
 			ps = con.prepareStatement(strSql);
-//
-//			for (int i = 0; i < atributos.length; i++) {
-//				Field field = atributos[i];
-//
-//				field.setAccessible(true);
-//
-//				if (field.getType().equals(int.class)) {
-//					ps.setInt(i + 1, field.getInt(obj));
-//				} else {
-//					if (field.getType().equals(String.class)) {
-//						ps.setString(i + 1, String.valueOf(field.get(obj)));
-//					} else {
-//						throw new RuntimeException("Tipo nao suportado , falta implementar");
-//					}
-//				}
-//			}
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
