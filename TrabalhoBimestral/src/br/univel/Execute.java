@@ -235,7 +235,6 @@ public class Execute extends SqlGen {
 		Class<?> cl = obj.getClass();
 		StringBuilder sb = new StringBuilder();
 		String nomeTabela;
-
 		Field[] atributos = cl.getDeclaredFields();
 
 		for (int i = 0; i < atributos.length; i++) {

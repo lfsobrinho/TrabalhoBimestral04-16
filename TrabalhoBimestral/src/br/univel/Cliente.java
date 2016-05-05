@@ -20,6 +20,7 @@ public class Cliente {
 	
 	@Coluna(nome="ESTADOCIVIL")
 	private EstadoCivil ec;
+	
 
 	public Cliente(int id, String nome , String end , String phone , EstadoCivil ec) {
 		super();
@@ -28,6 +29,10 @@ public class Cliente {
 		this.end = end;
 		this.phone = phone;
 		this.ec = ec;
+	}
+
+	public Cliente() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public EstadoCivil getEc() {

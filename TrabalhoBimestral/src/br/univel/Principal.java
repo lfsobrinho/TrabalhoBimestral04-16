@@ -8,21 +8,21 @@ public class Principal {
 
 	public Principal() {
 
-		Cliente c1 = new Cliente(0, null, null, null, null);
+		Cliente c1 = new Cliente();
 		c1.setId(1);
 		c1.setNome("Jose");
 		c1.setPhone("45999888");
 		c1.setEc(EstadoCivil.SOLTEIRO);
 		c1.setEnd("Rua Afalfa, 2000");
 
-		Cliente c2 = new Cliente(0, null, null, null, null);
+		Cliente c2 = new Cliente();
 		c1.setId(2);
 		c1.setNome("Lorizete");
 		c1.setPhone("45888888");
-		c1.setEc(EstadoCivil.SOLTEIRO);
+		c1.setEc(EstadoCivil.CASADO);
 		c1.setEnd("Rua Abacaxi, 120");
 
-		Cliente c3 = new Cliente(0, null, null, null, null);
+		Cliente c3 = new Cliente();
 		c1.setId(3);
 		c1.setNome("Kalvina");
 		c1.setPhone("45777777");

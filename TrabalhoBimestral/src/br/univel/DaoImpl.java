@@ -34,7 +34,8 @@ public class DaoImpl implements Dao<Cliente, Integer> {
 			ps.setString(2, c.getNome());
 			ps.setString(3, c.getEnd());
 			ps.setString(4, c.getPhone());
-			ps.setInt(5, c.getEc().ordinal());
+			//ps.setInt(5, c.getEc().ordinal());
+			ps.setInt(5, 0);
 			
 			ps.executeUpdate();
 			ps.close();
@@ -48,20 +49,20 @@ public class DaoImpl implements Dao<Cliente, Integer> {
 	@Override
 	public Cliente buscar(Integer k) {
 		Execute ger = new Execute();
-		Cliente c = new Cliente(k, null, null, null, null);
+		Cliente c = new Cliente();
 				
 		try {
 
-			PreparedStatement ps = ger.getSqlSelectById(con, new Cliente(k, null, null, null, null), k);
+			PreparedStatement ps = ger.getSqlSelectById(con, new Cliente(), k);
 			ps.setInt(1, k);
 			ResultSet resultados = ps.executeQuery();
 			
 			while (resultados.next()) {
-				c.setId(resultados.getInt("cli_codigo"));
-				c.setNome(resultados.getString("cli_nome"));
-				c.setEnd(resultados.getString("cli_endereco"));
-				c.setPhone(resultados.getString("cli_fone"));
-				c.setEc(EstadoCivil.getPorCodigo(resultados.getInt("cli_estcivil")));
+				c.setId(resultados.getInt("ID"));
+				c.setNome(resultados.getString("CLNOME"));
+				c.setEnd(resultados.getString("CLENDERECO"));
+				c.setPhone(resultados.getString("CLTELEFONE"));
+				c.setEc(EstadoCivil.getPorCodigo(resultados.getInt("ESTADOCIVIL")));
 			}			
 			
 			ps.close();
@@ -81,11 +82,11 @@ public class DaoImpl implements Dao<Cliente, Integer> {
 		try {
 
 			PreparedStatement ps = ger.getSqlUpdateById(con, t, 0);
-			ps.setString(1, t.getNome());
-			ps.setString(2, t.getEnd());
-			ps.setString(3, t.getPhone());
-			ps.setInt(4, t.getEc().ordinal());
-			ps.setInt(5, t.getId());
+			ps.setString(2, t.getNome());
+			ps.setString(3, t.getEnd());
+			ps.setString(4, t.getPhone());
+			ps.setInt(5, t.getEc().ordinal());
+			ps.setInt(1, t.getId());
 			
 			ps.executeUpdate();
 			ps.close();
@@ -125,12 +126,12 @@ public class DaoImpl implements Dao<Cliente, Integer> {
 			
 			while (resultados.next()) {
 				
-				Cliente c = new Cliente(0, null, null, null, null);
-				c.setId(resultados.getInt("cli_codigo"));
-				c.setNome(resultados.getString("cli_nome"));
-				c.setEnd(resultados.getString("cli_endereco"));
-				c.setPhone(resultados.getString("cli_fone"));
-				c.setEc(EstadoCivil.getPorCodigo(resultados.getInt("cli_estcivil")));
+				Cliente c = new Cliente();
+				c.setId(resultados.getInt("ID"));
+				c.setNome(resultados.getString("CLNOME"));
+				c.setEnd(resultados.getString("CLENDERECO"));
+				c.setPhone(resultados.getString("CLTELEFONE"));
+				c.setEc(EstadoCivil.getPorCodigo(resultados.getInt("ESTADOCIVIL")));
 				
 				listaCliente.add(c);
 			}			
